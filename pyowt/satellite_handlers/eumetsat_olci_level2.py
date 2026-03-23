@@ -28,6 +28,11 @@ class eumetsat_olci_level2:
         else:
             self.save_path = save_path
 
+        self.is_zip = False
+        self.temp_dir = None
+        self.zip_ref = None
+        self.temp_path = None
+        self.basename = None
         self.create_temporary_dir()
 
         try:
@@ -40,17 +45,27 @@ class eumetsat_olci_level2:
             if save:
                 self.save_result()
         finally:
-            self.temp_dir.cleanup()
-            self.zip_ref.close()
+            if self.is_zip and self.temp_dir is not None:
+                self.temp_dir.cleanup()
+            if self.is_zip and self.zip_ref is not None:
+                self.zip_ref.close()
 
     def create_temporary_dir(self):
-        # TODO: create under the satellite file path?
-        zip_path = self.filename
-        self.temp_dir = tempfile.TemporaryDirectory()
-        self.temp_path = self.temp_dir.name
-        self.zip_ref = zipfile.ZipFile(zip_path, 'r')
-        self.zip_ref.extractall(self.temp_path)
-        self.basename = os.path.basename(os.path.splitext(os.path.basename(zip_path))[0])
+        # Accept both zipped .SEN3.zip and unzipped .SEN3 directory
+        if os.path.isdir(self.filename):
+            # Unzipped directory
+            self.temp_path = self.filename
+            self.basename = os.path.basename(os.path.splitext(os.path.basename(self.filename))[0])
+            self.is_zip = False
+        else:
+            # Assume zipped file
+            zip_path = self.filename
+            self.temp_dir = tempfile.TemporaryDirectory()
+            self.temp_path = self.temp_dir.name
+            self.zip_ref = zipfile.ZipFile(zip_path, 'r')
+            self.zip_ref.extractall(self.temp_path)
+            self.basename = os.path.basename(os.path.splitext(os.path.basename(zip_path))[0])
+            self.is_zip = True
 
     @staticmethod
     def find_file(directory, filename):

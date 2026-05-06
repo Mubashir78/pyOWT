@@ -13,7 +13,7 @@ class OWT():
         Args:
             AVW (np.array, ndim <= 2): Apparent Visible Wavelength 400-800 nm
             Area (np.array, ndim <= 2): Trapezoidal area of Rrs at RGB bands
-            NDI (np.array, ndim <= 2): Normalized Difference Index of Rrs at G and B bands
+            NDI (np.array, ndim <= 2): Normalized Difference Index of Rrs at Green and Red bands
             version (str): Version of the classification centroids. Default as 'v01'.
                 Two version are now included:
                     - v01: original from Bi and Hieronymi (2024) paper

@@ -197,7 +197,7 @@ class OpticalVariables():
     def calculate_Area(self):
         bands_for_Area = np.array(self.sensor_RGB_bands)
         Rrs_for_Area = self.Rrs[:, :, np.where(np.isin(self.band, bands_for_Area))[0]]
-        self.Area = np.trapz(x=bands_for_Area, y=Rrs_for_Area, axis=-1)
+        self.Area = np.trapezoid(x=bands_for_Area, y=Rrs_for_Area, axis=-1)
 
 
     def calculate_NDI(self):
